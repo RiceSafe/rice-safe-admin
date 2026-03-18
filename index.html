@@ -1,0 +1,336 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>RiceSafe Admin Panel</title>
+</head>
+<body>
+
+<!-- Login Screen -->
+<div id="login-screen">
+  <div class="login-card">
+    <div class="login-logo">
+      <div class="brand-icon">
+        <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10 10-4.5 10-10"/>
+          <path d="M12 6v6l4 2"/>
+          <path d="M16 2h6v6"/>
+          <path d="M22 2 12 12"/>
+        </svg>
+      </div>
+      <h1>RiceSafe Admin Portal</h1>
+      <p>เข้าสู่ระบบสำหรับผู้ดูแลและผู้เชี่ยวชาญ</p>
+    </div>
+    <div class="form-group">
+      <label for="login-email">อีเมล</label>
+      <input type="email" id="login-email" placeholder="you@example.com" autocomplete="email"/>
+    </div>
+    <div class="form-group">
+      <label for="login-password">รหัสผ่าน</label>
+      <input type="password" id="login-password" placeholder="••••••••" autocomplete="current-password"/>
+    </div>
+    <div class="error-msg" id="login-error"></div>
+    <button class="btn btn-primary btn-full" id="login-btn" style="margin-top:8px">เข้าสู่ระบบ</button>
+  </div>
+</div>
+
+<!-- App Container -->
+<div id="app">
+  <!-- Sidebar -->
+  <aside class="sidebar">
+    <div class="sidebar-header">
+      <span class="logo-icon">
+        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10 10-4.5 10-10"/>
+          <path d="M12 6v6l4 2"/>
+          <path d="M16 2h6v6"/><path d="M22 2 12 12"/>
+        </svg>
+      </span>
+      <div class="logo-text">
+        <h2>RiceSafe</h2>
+        <p>ผู้ดูแลระบบ</p>
+      </div>
+    </div>
+
+    <nav class="sidebar-nav">
+      <div class="nav-section-label">ภาพรวม</div>
+      <div class="nav-item" data-page="dashboard">
+        <span class="nav-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/>
+            <rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/>
+          </svg>
+        </span>
+        แดชบอร์ด
+      </div>
+
+      <div class="nav-section-label">คลังความรู้โรคข้าว</div>
+      <div class="nav-item" data-page="diseases">
+        <span class="nav-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M9 3H5a2 2 0 0 0-2 2v4m6-6h10a2 2 0 0 1 2 2v4M9 3v18m0 0h10a2 2 0 0 0 2-2V9M9 21H5a2 2 0 0 1-2-2V9m0 0h18"/>
+          </svg>
+        </span>
+        โรคข้าว
+      </div>
+
+      <div class="nav-section-label">พื้นที่ระบาด</div>
+      <div class="nav-item" data-page="outbreaks">
+        <span class="nav-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/>
+            <circle cx="12" cy="10" r="3"/>
+          </svg>
+        </span>
+        การระบาดทั้งหมด
+      </div>
+      <div class="nav-item" data-page="verify">
+        <span class="nav-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/>
+            <polyline points="22 4 12 14.01 9 11.01"/>
+          </svg>
+        </span>
+        รอตรวจสอบ
+      </div>
+
+      <div class="nav-section-label admin-only" style="display:none">ผู้ใช้งาน</div>
+      <div class="nav-item admin-only" data-page="users" style="display:none">
+        <span class="nav-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
+            <circle cx="9" cy="7" r="4"/>
+            <path d="M23 21v-2a4 4 0 0 0-3-3.87"/>
+            <path d="M16 3.13a4 4 0 0 1 0 7.75"/>
+          </svg>
+        </span>
+        จัดการผู้ใช้งาน
+      </div>
+      <div class="nav-item admin-only" data-page="community" style="display:none">
+        <span class="nav-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
+          </svg>
+        </span>
+        จัดการชุมชน
+      </div>
+    </nav>
+
+    <div class="sidebar-footer">
+      <div class="user-chip">
+        <div class="avatar" id="sidebar-avatar">?</div>
+        <div class="user-info">
+          <div class="user-name" id="sidebar-username">—</div>
+          <div class="user-role"><span class="role-badge" id="sidebar-role">—</span></div>
+        </div>
+      </div>
+      <button class="btn btn-ghost btn-full" id="logout-btn">ออกจากระบบ</button>
+    </div>
+  </aside>
+
+  <!-- Main content -->
+  <main class="main">
+
+    <!-- Dashboard -->
+    <div class="page" id="page-dashboard">
+      <div class="page-header">
+        <h1>แดชบอร์ด</h1>
+        <p>ภาพรวมของระบบ RiceSafe</p>
+      </div>
+      <div class="stats-grid">
+        <div class="stat-card"><div class="stat-label">โรคข้าวทั้งหมด</div><div class="stat-value" id="stat-diseases">—</div></div>
+        <div class="stat-card"><div class="stat-label">พื้นที่ระบาด</div><div class="stat-value" id="stat-outbreaks">—</div></div>
+        <div class="stat-card"><div class="stat-label">รอตรวจสอบ</div><div class="stat-value" style="color:var(--warn)" id="stat-pending">—</div></div>
+        <div class="stat-card admin-only" style="display:none"><div class="stat-label">ผู้ใช้งานทั้งหมด</div><div class="stat-value" id="stat-users">—</div></div>
+      </div>
+      <div class="card">
+        <div class="card-header">
+          <h2>รอยืนยันการระบาด</h2>
+          <button class="btn btn-warn btn-sm" data-page="verify" onclick="document.querySelector('[data-page=verify]').click()">ดูทั้งหมด</button>
+        </div>
+        <div id="dashboard-outbreaks-body"><div class="loading">Loading…</div></div>
+      </div>
+    </div>
+
+    <!-- Diseases -->
+    <div class="page" id="page-diseases">
+      <div class="page-header-row">
+        <div>
+          <h1>คลังความรู้โรคข้าว</h1>
+          <p>จัดการฐานข้อมูลโรคข้าว</p>
+        </div>
+        <button class="btn btn-primary" id="add-disease-btn">+ เพิ่มโรคข้าว</button>
+      </div>
+      <div class="card">
+        <div class="card-header">
+          <h2>โรคข้าวทั้งหมด</h2>
+          <div class="filter-row">
+            <select id="disease-category-filter">
+              <option value="">ทุกหมวดหมู่</option>
+            </select>
+          </div>
+        </div>
+        <div id="diseases-table-body"><div class="loading">Loading…</div></div>
+      </div>
+    </div>
+
+    <!-- All Outbreaks -->
+    <div class="page" id="page-outbreaks">
+      <div class="page-header">
+        <h1>การระบาดทั้งหมด</h1>
+        <p>บันทึกการระบาดทั้งหมด</p>
+      </div>
+      <div class="card">
+        <div class="card-header"><h2>บันทึกการระบาด</h2></div>
+        <div id="outbreaks-table-body"><div class="loading">Loading…</div></div>
+      </div>
+    </div>
+
+    <!-- Pending Verification -->
+    <div class="page" id="page-verify">
+      <div class="page-header">
+        <h1>รอตรวจสอบ</h1>
+        <p>รายงานที่รอการตรวจสอบจากผู้เชี่ยวชาญ</p>
+      </div>
+      <div class="card">
+        <div class="card-header"><h2>รอยืนยันการระบาด</h2></div>
+        <div id="verify-table-body"><div class="loading">Loading…</div></div>
+      </div>
+    </div>
+
+    <!-- User Management -->
+    <div class="page" id="page-users">
+      <div class="page-header">
+        <h1>จัดการผู้ใช้งาน</h1>
+        <p>จัดการสิทธิ์ผู้ใช้งาน</p>
+      </div>
+      <div class="card">
+        <div class="card-header">
+          <h2>ผู้ใช้งานทั้งหมด</h2>
+          <div class="filter-row">
+            <select id="user-role-filter">
+              <option value="">ทุกสิทธิ์</option>
+              <option value="FARMER">ชาวนา</option>
+              <option value="EXPERT">ผู้เชี่ยวชาญ</option>
+              <option value="ADMIN">ผู้ดูแลระบบ</option>
+            </select>
+          </div>
+        </div>
+        <div id="users-table-body"><div class="loading">Loading…</div></div>
+      </div>
+    </div>
+
+    <!-- Community Moderation -->
+    <div class="page" id="page-community">
+      <div class="page-header">
+        <h1>จัดการชุมชน</h1>
+        <p>ตรวจสอบและจัดการโพสต์</p>
+      </div>
+      <div class="card">
+        <div class="card-header">
+          <h2>โพสต์ทั้งหมด</h2>
+        </div>
+        <div id="community-table-body"><div class="loading">Loading…</div></div>
+      </div>
+    </div>
+
+  </main>
+</div>
+
+<!-- Modals -->
+<div class="modal-overlay" id="modal-disease">
+  <div class="modal" style="max-width:640px">
+    <h2 id="disease-modal-title">เพิ่มโรคข้าว</h2>
+    <p class="sub">เนื้อหาเหล่านี้จะแสดงในแอปพลิเคชัน</p>
+    <input type="hidden" id="disease-id"/>
+
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:0 16px">
+      <div class="form-group"><label>ชื่อโรค *</label><input type="text" id="disease-name" placeholder="เช่น โรคใบจุดสีน้ำตาล"/></div>
+      <div class="form-group"><label>ชื่ออ้างอิง * <span style="font-weight:400;font-size:11px">(ภาษาอังกฤษ ไม่มีช่องว่าง)</span></label><input type="text" id="disease-alias" placeholder="เช่น brown_spot"/></div>
+      <div class="form-group"><label>หมวดหมู่ *</label><input type="text" id="disease-category" placeholder="เช่น เชื้อรา, แบคทีเรีย"/></div>
+      <div class="form-group">
+        <label>รูปภาพ</label>
+        <div style="display:flex;gap:12px;align-items:center;">
+          <img id="disease-image-preview" src="" style="width:64px;height:64px;object-fit:cover;border-radius:8px;display:none;background:var(--surface2);"/>
+          <button class="btn btn-ghost" onclick="document.getElementById('disease-image-file').click()" style="height:fit-content;">อัปโหลดรูปภาพ</button>
+          <input type="file" id="disease-image-file" style="display:none" accept="image/*"/>
+          <input type="hidden" id="disease-image-url"/>
+        </div>
+      </div>
+    </div>
+
+    <div class="form-group"><label>รายละเอียด</label><textarea id="disease-description" placeholder="ภาพรวมของโรคข้าว…"></textarea></div>
+    <div class="form-group"><label>การแพร่ระบาด</label><textarea id="disease-spread" placeholder="ระบาดอย่างไร?"></textarea></div>
+    <div class="form-group">
+      <label>สภาพอากาศที่เหมาะสม <span style="font-weight:400;font-size:11px">(คั่นด้วยลูกน้ำ เช่น ชื้น, ฝนตก)</span></label>
+      <input type="text" id="disease-weather" placeholder="ชื้น, ฝนตก"/>
+    </div>
+
+    <p style="font-size:12px;color:var(--muted);margin-bottom:12px;padding:10px 12px;background:var(--surface2);border-radius:8px">
+      <strong>รูปแบบแต่ละหัวข้อ:</strong> เว้นบรรทัดเพื่อแบ่งหัวข้อ บรรทัดแรกคือชื่อหัวข้อ นอกนั้นคือรายละเอียด<br/>
+      <em>ตัวอย่าง: "ระยะเริ่มต้น\nใบจะเริ่มมีสีเหลืองที่ปลายใบ…"</em>
+    </p>
+
+    <div class="form-group"><label>อาการ</label><textarea id="disease-symptoms" rows="4" placeholder="ชื่อหัวข้อ&#10;รายละเอียด…&#10;&#10;หัวข้อถัดไป&#10;รายละเอียดถัดไป…"></textarea></div>
+    <div class="form-group"><label>การป้องกัน</label><textarea id="disease-prevention" rows="4" placeholder="ใช้เมล็ดพันธุ์ที่ได้รับการรับรอง&#10;เลือกใช้เมล็ดพันธุ์ที่ปราศจากโรค…"></textarea></div>
+    <div class="form-group"><label>การรักษา</label><textarea id="disease-treatment" rows="4" placeholder="ใช้สารกำจัดเชื้อรา&#10;ฉีดพ่นเมื่อพบอาการแรกของโรค…"></textarea></div>
+
+    <div class="modal-footer">
+      <button class="btn btn-ghost" onclick="document.getElementById('modal-disease').classList.remove('open')">ยกเลิก</button>
+      <button class="btn btn-primary" id="save-disease-btn">บันทึกข้อมูล</button>
+    </div>
+  </div>
+</div>
+
+<div class="modal-overlay" id="modal-role">
+  <div class="modal" style="max-width:380px">
+    <h2>เปลี่ยนสิทธิ์</h2>
+    <p class="sub" id="role-modal-sub">—</p>
+    <input type="hidden" id="role-user-id"/>
+    <div class="form-group">
+      <label>สิทธิ์ใหม่</label>
+      <select id="role-select">
+        <option value="FARMER">ชาวนา</option>
+        <option value="EXPERT">ผู้เชี่ยวชาญ</option>
+        <option value="ADMIN">ผู้ดูแลระบบ</option>
+      </select>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-ghost" onclick="document.getElementById('modal-role').classList.remove('open')">ยกเลิก</button>
+      <button class="btn btn-primary" id="save-role-btn">อัปเดตสิทธิ์</button>
+    </div>
+  </div>
+</div>
+
+<div class="modal-overlay" id="modal-confirm">
+  <div class="modal" style="max-width:380px">
+    <h2 id="confirm-title">ยืนยันการทำรายการ?</h2>
+    <p class="sub" id="confirm-msg">การกระทำนี้ไม่สามารถย้อนกลับได้</p>
+    <div class="modal-footer">
+      <button class="btn btn-ghost" onclick="document.getElementById('modal-confirm').classList.remove('open')">ยกเลิก</button>
+      <button class="btn btn-danger" id="confirm-btn">ลบ</button>
+    </div>
+  </div>
+</div>
+
+<div class="modal-overlay" id="modal-detail">
+  <div class="modal" style="max-width:500px">
+    <div style="display:flex; justify-content:space-between; align-items:flex-start;">
+      <div style="padding-right:16px;">
+        <h2 id="detail-title" style="margin-bottom:4px">หัวข้อ</h2>
+        <p class="sub" id="detail-subtitle" style="margin:0">รายละเอียด</p>
+      </div>
+      <button class="btn btn-ghost" onclick="document.getElementById('modal-detail').classList.remove('open')" style="padding:4px 8px;">✕</button>
+    </div>
+    <img id="detail-image" src="" alt="ภาพประกอบ" style="width:100%; border-radius:8px; margin: 16px 0; max-height: 400px; object-fit: contain; display: none;" />
+    <div id="detail-content" style="line-height: 1.5; color: var(--text);"></div>
+  </div>
+</div>
+
+<!-- Toast -->
+<div id="toast-container"></div>
+
+<script type="module" src="/src/main.js"></script>
+</body>
+</html>
