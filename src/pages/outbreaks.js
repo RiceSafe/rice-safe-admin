@@ -1,15 +1,43 @@
-import { apiGet, apiPost, apiDelete, apiPut } from '../api.js'
+import { apiGet, apiPost, apiDelete } from '../api.js'
 import { toast, openModal, closeModal, fmtDate, verifiedBadge, activeBadge, openDetailModal } from '../ui.js'
 
+let _allOutbreaks = []
+let _currentUser  = null
+
 export async function loadAdminOutbreaks(currentUser) {
-  document.getElementById('outbreaks-table-body').innerHTML = `<div class="loading">Loading…</div>`
+  _currentUser = currentUser
+  document.getElementById('outbreaks-table-body').innerHTML = `<div class="loading">กำลังโหลด…</div>`
   try {
-    const outbreaks = await apiGet('/outbreaks')
-    renderOutbreakTable(outbreaks, currentUser)
+    _allOutbreaks = await apiGet('/outbreaks')
+    renderFilterControls()
+    applyFilter()
   } catch {
     document.getElementById('outbreaks-table-body').innerHTML =
       `<div class="empty-state">โหลดข้อมูลล้มเหลว</div>`
   }
+}
+
+function renderFilterControls() {
+  const header = document.querySelector('#page-outbreaks .card-header')
+  if (!header.querySelector('#outbreak-status-filter')) {
+    const sel = document.createElement('select')
+    sel.id = 'outbreak-status-filter'
+    sel.style.cssText = 'padding:8px 12px;font-size:13px;width:auto;'
+    sel.innerHTML = `
+      <option value="active">กำลังระบาด</option>
+      <option value="all">ทั้งหมด</option>
+      <option value="resolved">ยุติแล้ว</option>`
+    sel.addEventListener('change', applyFilter)
+    header.appendChild(sel)
+  }
+}
+
+function applyFilter() {
+  const filter = document.getElementById('outbreak-status-filter')?.value || 'active'
+  let filtered = _allOutbreaks
+  if (filter === 'active')   filtered = _allOutbreaks.filter(o => o.is_active !== false)
+  if (filter === 'resolved') filtered = _allOutbreaks.filter(o => o.is_active === false)
+  renderOutbreakTable(filtered, _currentUser)
 }
 
 function renderOutbreakTable(outbreaks, currentUser) {
@@ -49,11 +77,8 @@ function renderOutbreakTable(outbreaks, currentUser) {
                 ${isExpert && o.is_verified && o.is_active !== false
                   ? `<button class="btn btn-ghost btn-sm" data-action="resolve" data-id="${o.id}">ยุติการระบาด</button>`
                   : ''}
-                ${isAdmin
-                  ? `<button class="btn btn-danger btn-sm" data-action="delete" data-id="${o.id}">ลบ</button>`
-                  : ''}
-                ${isExpert && !o.is_verified
-                  ? `<button class="btn btn-danger btn-sm" data-action="delete" data-id="${o.id}">ลบ</button>`
+                ${isAdmin || isExpert
+                  ? `<button class="btn btn-danger btn-sm" data-action="delete" data-id="${o.id}">ลบรายการ</button>`
                   : ''}
               </div>
             </td>
@@ -68,7 +93,7 @@ function renderOutbreakTable(outbreaks, currentUser) {
     btn.addEventListener('click', () => confirmDeleteOutbreak(btn.dataset.id, currentUser))
   })
 
-  // Add click to view details
+  // Click row to view details
   el.querySelectorAll('tbody tr').forEach((row, index) => {
     row.style.cursor = 'pointer'
     row.addEventListener('click', (e) => {
@@ -84,6 +109,11 @@ function renderOutbreakTable(outbreaks, currentUser) {
   })
 }
 
+function resetConfirmBtn() {
+  document.getElementById('confirm-btn').className   = 'btn btn-danger'
+  document.getElementById('confirm-btn').textContent = 'ลบรายการ'
+}
+
 function confirmResolveOutbreak(id, currentUser) {
   document.getElementById('confirm-title').textContent = 'ยุติการระบาด?'
   document.getElementById('confirm-msg').textContent   =
@@ -95,14 +125,11 @@ function confirmResolveOutbreak(id, currentUser) {
       await apiPost(`/outbreaks/${id}/resolve`, {})
       toast('บันทึกการยุติการระบาดแล้ว')
       closeModal('modal-confirm')
-      // Reset confirm button style
-      document.getElementById('confirm-btn').className = 'btn btn-danger'
-      document.getElementById('confirm-btn').textContent = 'ลบ'
+      resetConfirmBtn()
       await loadAdminOutbreaks(currentUser)
     } catch (e) {
       toast(e.message, 'error')
-      document.getElementById('confirm-btn').className = 'btn btn-danger'
-      document.getElementById('confirm-btn').textContent = 'ลบ'
+      resetConfirmBtn()
     }
   }
   openModal('modal-confirm')
@@ -111,7 +138,7 @@ function confirmResolveOutbreak(id, currentUser) {
 function confirmDeleteOutbreak(id, currentUser) {
   document.getElementById('confirm-title').textContent = 'ลบบันทึกการระบาด?'
   document.getElementById('confirm-msg').textContent   = 'บันทึกนี้จะถูกลบอย่างถาวรและไม่สามารถเรียกคืนได้'
-  document.getElementById('confirm-btn').textContent   = 'ลบ'
+  document.getElementById('confirm-btn').textContent   = 'ลบรายการ'
   document.getElementById('confirm-btn').className     = 'btn btn-danger'
   document.getElementById('confirm-btn').onclick = async () => {
     try {
