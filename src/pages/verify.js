@@ -23,7 +23,7 @@ export async function loadPendingVerification(currentUser) {
             <th>โรคข้าว</th>
             <th>สถานที่</th>
             <th>รายงานเมื่อ</th>
-            <th>${isExpert ? 'จัดการ' : 'จัดการ'}</th>
+            <th>จัดการ</th>
           </tr>
         </thead>
         <tbody>
@@ -36,9 +36,9 @@ export async function loadPendingVerification(currentUser) {
               <td>
                 <div class="table-actions">
                   ${isExpert
-                    ? `<button class="btn btn-warn btn-sm" data-action="verify" data-id="${o.id}">ตรวจสอบ</button>`
+                    ? `<button class="btn btn-warn btn-sm" data-action="verify" data-id="${o.id}">ยืนยัน</button>`
                     : ''}
-                  <button class="btn btn-danger btn-sm" data-action="delete" data-id="${o.id}">ลบ</button>
+                  <button class="btn btn-danger btn-sm" data-action="delete" data-id="${o.id}">ลบรายการ</button>
                 </div>
               </td>
             </tr>`).join('')}
@@ -49,10 +49,10 @@ export async function loadPendingVerification(currentUser) {
       btn.addEventListener('click', () => verifyOutbreak(btn.dataset.id, btn, currentUser))
     })
     el.querySelectorAll('[data-action="delete"]').forEach(btn => {
-      btn.addEventListener('click', () => confirmDeleteOutbreak(btn.dataset.id, 'verify-row', currentUser))
+      btn.addEventListener('click', () => confirmDeleteOutbreak(btn.dataset.id, 'verify-row'))
     })
 
-    // Add click to view details
+    // Click row to view details
     el.querySelectorAll('tbody tr').forEach((row, index) => {
       row.style.cursor = 'pointer'
       row.addEventListener('click', (e) => {
@@ -74,26 +74,26 @@ export async function loadPendingVerification(currentUser) {
 
 export async function verifyOutbreak(id, btnEl, currentUser) {
   if (currentUser.role !== 'EXPERT') {
-    toast('เฉพาะผู้เชี่ยวชาญเท่านั้นที่สามารถตรวจสอบการระบาดได้', 'error')
+    toast('เฉพาะผู้เชี่ยวชาญเท่านั้นที่สามารถยืนยันการระบาดได้', 'error')
     return
   }
-  if (btnEl) { btnEl.disabled = true; btnEl.textContent = 'กำลังตรวจสอบ…' }
+  if (btnEl) { btnEl.disabled = true; btnEl.textContent = 'กำลังยืนยัน…' }
   try {
     await apiPost(`/outbreaks/${id}/verify`, {})
-    toast('ตรวจสอบการระบาดแล้ว')
+    toast('ยืนยันการระบาดแล้ว')
     document.getElementById(`verify-row-${id}`)?.remove()
     document.getElementById(`dash-row-${id}`)?.remove()
   } catch (e) {
     toast(e.message, 'error')
-    if (btnEl) { btnEl.disabled = false; btnEl.textContent = 'ตรวจสอบ' }
+    if (btnEl) { btnEl.disabled = false; btnEl.textContent = 'ยืนยัน' }
   }
 }
 
-function confirmDeleteOutbreak(id, rowPrefix, currentUser) {
+function confirmDeleteOutbreak(id, rowPrefix) {
   document.getElementById('confirm-title').textContent = 'ลบรายงานการระบาด?'
   document.getElementById('confirm-msg').textContent   =
     'รายงานการระบาดจะถูกลบอย่างถาวร หากเป็นรายงานที่ผิดพลาดหรือสแปม'
-  document.getElementById('confirm-btn').textContent   = 'ลบ'
+  document.getElementById('confirm-btn').textContent   = 'ลบรายการ'
   document.getElementById('confirm-btn').className     = 'btn btn-danger'
   document.getElementById('confirm-btn').onclick = async () => {
     try {

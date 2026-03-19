@@ -1,12 +1,10 @@
-import { apiGet, publicGet } from '../api.js'
-import { fmtDate, verifiedBadge, activeBadge, openDetailModal } from '../ui.js'
+import { apiGet, apiDelete, publicGet } from '../api.js'
+import { fmtDate, openDetailModal, toast, openModal, closeModal } from '../ui.js'
 import { verifyOutbreak } from './verify.js'
 
 export async function loadDashboard(currentUser) {
   try {
     const diseases = await publicGet('/diseases')
-
-    // Call unified endpoint
     const outbreaks = await apiGet('/outbreaks')
 
     const pending = outbreaks.filter(o => !o.is_verified)
@@ -31,10 +29,14 @@ export async function loadDashboard(currentUser) {
 
 function renderMiniOutbreaks(rows, currentUser) {
   const el = document.getElementById('dashboard-outbreaks-body')
+  const isExpert = currentUser.role === 'EXPERT'
+  const isAdmin  = currentUser.role === 'ADMIN'
+
   if (!rows.length) {
     el.innerHTML = `<div class="empty-state">ไม่มีการระบาดที่รอตรวจสอบ</div>`
     return
   }
+
   el.innerHTML = `
     <table>
       <thead><tr><th style="width:50px;">รูป</th><th>โรคข้าว</th><th>สถานที่</th><th>รายงานเมื่อ</th><th>จัดการ</th></tr></thead>
@@ -46,21 +48,40 @@ function renderMiniOutbreaks(rows, currentUser) {
             <td style="color:var(--muted)">${o.latitude?.toFixed(4)}, ${o.longitude?.toFixed(4)}</td>
             <td style="color:var(--muted)">${fmtDate(o.created_at)}</td>
             <td>
-              ${currentUser.role === 'EXPERT' ? `
-                <button class="btn btn-warn btn-sm" data-id="${o.id}" data-page="dashboard">
-                  ตรวจสอบ
-                </button>
-              ` : `<span style="color:var(--muted)">อ่านข้อมูล</span>`}
+              <div class="table-actions">
+                ${isExpert ? `<button class="btn btn-warn btn-sm" data-action="verify" data-id="${o.id}">ยืนยัน</button>` : ''}
+                ${isExpert || isAdmin ? `<button class="btn btn-danger btn-sm" data-action="delete" data-id="${o.id}">ลบรายการ</button>` : ''}
+              </div>
             </td>
           </tr>`).join('')}
       </tbody>
     </table>`
 
-    el.querySelectorAll('[data-id]').forEach(btn => {
+  el.querySelectorAll('[data-action="verify"]').forEach(btn => {
     btn.addEventListener('click', () => verifyOutbreak(btn.dataset.id, btn, currentUser))
   })
 
-  // Add click to view details (skip buttons)
+  el.querySelectorAll('[data-action="delete"]').forEach(btn => {
+    btn.addEventListener('click', () => {
+      document.getElementById('confirm-title').textContent = 'ลบรายงานการระบาด?'
+      document.getElementById('confirm-msg').textContent   = 'รายงานการระบาดจะถูกลบอย่างถาวร'
+      document.getElementById('confirm-btn').textContent   = 'ลบรายการ'
+      document.getElementById('confirm-btn').className     = 'btn btn-danger'
+      document.getElementById('confirm-btn').onclick = async () => {
+        try {
+          await apiDelete(`/outbreaks/${btn.dataset.id}`)
+          toast('ลบรายงานแล้ว')
+          closeModal('modal-confirm')
+          document.getElementById(`dash-row-${btn.dataset.id}`)?.remove()
+        } catch (e) {
+          toast(e.message, 'error')
+        }
+      }
+      openModal('modal-confirm')
+    })
+  })
+
+  // Click row to view details
   el.querySelectorAll('tbody tr').forEach((row, index) => {
     row.style.cursor = 'pointer'
     row.addEventListener('click', (e) => {
