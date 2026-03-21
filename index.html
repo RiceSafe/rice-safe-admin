@@ -4,6 +4,7 @@
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>RiceSafe Admin Panel</title>
+  <script src="https://accounts.google.com/gsi/client" async defer></script>
 </head>
 <body>
 
@@ -32,6 +33,8 @@
     </div>
     <div class="error-msg" id="login-error"></div>
     <button class="btn btn-primary btn-full" id="login-btn" style="margin-top:8px">เข้าสู่ระบบ</button>
+    <div style="margin: 16px 0; text-align: center; color: var(--muted); font-size: 14px;">หรือ</div>
+    <div id="google-login-btn" style="display: flex; justify-content: center;"></div>
   </div>
 </div>
 
