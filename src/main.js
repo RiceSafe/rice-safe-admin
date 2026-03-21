@@ -26,9 +26,63 @@ window.addEventListener('DOMContentLoaded', async () => {
     } catch {
       token = ''
       localStorage.removeItem('rs_admin_token')
+      initGoogleLogin()
     }
+  } else {
+    initGoogleLogin()
   }
 })
+
+function initGoogleLogin() {
+  const clientId = import.meta.env.VITE_GOOGLE_CLIENT_ID
+  if (!clientId) return
+
+  if (!window.google || !window.google.accounts) {
+    // If script not loaded yet, retry in 100ms
+    setTimeout(initGoogleLogin, 100)
+    return
+  }
+
+  const btnContainer = document.getElementById('google-login-btn')
+  if (!btnContainer) return
+
+  window.google.accounts.id.initialize({
+    client_id: clientId,
+    callback: handleGoogleCredentialResponse,
+    auto_select: false,
+    cancel_on_tap_outside: true,
+  })
+
+  window.google.accounts.id.renderButton(
+    btnContainer,
+    { theme: 'outline', size: 'large', width: 320 }
+  )
+}
+
+async function handleGoogleCredentialResponse(response) {
+  const errEl = document.getElementById('login-error')
+  errEl.textContent = ''
+
+  try {
+    const data = await apiPost('/auth/oauth', {
+      provider: 'google',
+      id_token: response.credential
+    })
+
+    if (data.user.role !== 'ADMIN' && data.user.role !== 'EXPERT') {
+      throw new Error('ปฏิเสธการเข้าถึง: บัญชีของคุณไม่ใช่ผู้ช่วยหรือผู้ดูแลระบบ')
+    }
+
+    token = data.token
+    localStorage.setItem('rs_admin_token', token)
+    setToken(token)
+    bootApp(data.user)
+    toast('เข้าสู่ระบบสำเร็จ')
+  } catch (e) {
+    errEl.textContent = e.message
+    toast(e.message, 'error')
+  }
+}
 
 // ==== LOGIN ====
 function wireStaticButtons() {
