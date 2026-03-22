@@ -77,7 +77,7 @@ function renderDiseaseTable(diseases) {
         <tr>
           <th style="width:50px;">รูป</th>
           <th>ชื่อโรค</th>
-          <th>อ้างอิง</th>
+          <th>ชื่อเรียกในระบบ</th>
           <th>หมวดหมู่</th>
           <th>อาการ</th>
           <th>สภาพอากาศ</th>
@@ -176,7 +176,7 @@ export async function saveDisease() {
   }
 
   if (!body.name || !body.alias || !body.category) {
-    toast('กรุณากรอกชื่อโรค ชื่ออ้างอิง และหมวดหมู่ให้ครบถ้วน', 'error')
+    toast('กรุณากรอกชื่อโรค ชื่อเรียกในระบบ และหมวดหมู่ให้ครบถ้วน', 'error')
     return
   }
 
