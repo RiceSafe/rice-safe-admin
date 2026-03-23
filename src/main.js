@@ -144,7 +144,13 @@ function bootApp(user) {
   const roleEl = document.getElementById('sidebar-role')
   roleEl.textContent = roleTh
   roleEl.className = `role-badge role-${user.role}`
-  document.getElementById('sidebar-avatar').textContent = user.username[0].toUpperCase()
+
+  const avatarEl = document.getElementById('sidebar-avatar')
+  if (user.avatar_url) {
+    avatarEl.innerHTML = `<img src="${user.avatar_url}" alt="${user.username}">`
+  } else {
+    avatarEl.textContent = user.username[0].toUpperCase()
+  }
 
   // Show admin-only nav items
   if (user.role === 'ADMIN') {
