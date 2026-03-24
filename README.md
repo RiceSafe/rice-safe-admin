@@ -1,5 +1,7 @@
 # RiceSafe Admin Portal
 
+![CI](https://github.com/RiceSafe/rice-safe-admin/actions/workflows/test.yml/badge.svg)
+
 RiceSafe Admin Portal is a web interface designed for administrators and rice experts. It serves as the command center for monitoring rice disease outbreaks, managing the disease knowledge base, moderating community interactions, and overseeing user roles.
 
 ## Features
