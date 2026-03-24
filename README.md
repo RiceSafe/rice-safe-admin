@@ -1,79 +1,101 @@
 # RiceSafe Admin Portal
 
-RiceSafe Admin Portal is the web-based management interface for the RiceSafe platform. It allows authorized administrators and rice experts to manage disease records, review and verify outbreak reports, moderate community content, and manage user roles.
+RiceSafe Admin Portal is a web interface designed for administrators and rice experts. It serves as the command center for monitoring rice disease outbreaks, managing the disease knowledge base, moderating community interactions, and overseeing user roles.
 
 ## Features
 
-- **Dashboard:** Overview of active outbreaks, pending verifications, disease count, and user stats.
-- **Disease Library:** Create, edit, and upload images for rice disease entries shown in the mobile app.
-- **Outbreak Management:** View all outbreak reports with image thumbnails; resolve or delete records.
-- **Pending Verification:** Experts can review unverified outbreak reports and confirm them.
-- **Community Moderation:** Admins can view and delete inappropriate community posts.
-- **User Management:** Admins can view all users and change their roles (Farmer, Expert, Admin).
+- **Dashboard:** Real-time visibility into active outbreaks, pending expert reviews, total disease data, and user demographics.
+- **Disease Library Management:** Robust CRUD operations for rice disease entries, featuring automated image processing and multi-section details.
+- **Outbreak Command Center:** Lifecycle management of outbreak reports—from user submission through expert verification to final resolution.
+- **Expert Verification Flow:** Specialized interface for rice experts to review, confirm, or reject community-reported disease instances.
+- **Community Moderation:** Tools for monitoring social interactions and maintaining a healthy, professional environment within the platform.
+- **User & Role Orchestration:** Advanced management of user accounts and permissions with JWT and OAuth integration.
+- **Secure Access:** Enterprise-grade authentication with Google OAuth 2.0 and JWT-based session management.
 
 ## Tech Stack
 
-- **Framework:** Vite (Vanilla JavaScript)
-- **Styling:** Custom CSS (no framework)
-- **API:** Connects to the RiceSafe Backend REST API via JWT authentication
-- **Image Upload:** Uploads directly to Google Cloud Storage via the backend `/api/upload` endpoint
+- **Framework:** Vite (Vanilla JavaScript - ESM)
+- **Styling:** Custom Vanilla CSS (Modern Design System with Dark Mode/Glassmorphism)
+- **Auth:** Google OAuth 2.0 & JWT (Bearer Token)
+- **API Connectivity:** RESTful Backend integration via Fetch API
+- **Testing:** Vitest with `jsdom` (Comprehensive Unit & DOM Testing)
+- **Icons:** SVG-based iconography (Minimal footprint)
+- **Typography:** Google Fonts (Inter)
 
 ## Project Structure
 
-```
+```text
 rice-safe-admin/
 ├── src/
-│   ├── pages/           # Page modules (dashboard, diseases, outbreaks, etc.)
-│   │   ├── dashboard.js
-│   │   ├── diseases.js
-│   │   ├── outbreaks.js
-│   │   ├── verify.js
-│   │   ├── users.js
-│   │   └── community.js
-│   ├── api.js           # Fetch helpers and JWT token management
-│   ├── ui.js            # Shared UI utilities (toast, modal, badges)
-│   ├── main.js          # App entry point, routing, and auth boot
-│   └── style.css        # Global design system and CSS variables
-├── index.html           # Single-page HTML shell with all modals
-├── .env                 # Local environment variables (not committed)
-├── .env.example         # Environment variable template
-├── vite.config.js       # Vite configuration
-└── package.json
+│   ├── pages/           # Modular page logic (Single Page App)
+│   │   ├── community.js  # Forum & moderation logic
+│   │   ├── dashboard.js  # Stats & overview
+│   │   ├── diseases.js   # Disease library CRUD
+│   │   ├── outbreaks.js  # All outbreak reports
+│   │   ├── users.js      # Role & user management
+│   │   └── verify.js     # Expert verification workflow
+│   ├── tests/           # Robust Vitest test suite (9+ modules)
+│   ├── api.js           # API Communication Layer (Fetch wrapper)
+│   ├── ui.js            # Shared UI Toolkit (Toasts, Modals, Badges)
+│   ├── main.js          # App Entry, Routing, & Auth Lifecycle
+│   └── style.css        # Core Design System & Global Styles
+├── index.html           # SPA Shell & Modal Definitions
+├── Makefile             # Standardized development workflows
+├── vite.config.js       # Vite & Vitest configuration
+└── package.json         # Dependency management
 ```
 
 ## Getting Started
 
-**1. Install dependencies:**
+### 1. Prerequisites
+- Node.js
+- NPM or PNPM
+
+### 2. Setup
 ```bash
+# Install dependencies
 npm install
 ```
 
-**2. Configure environment:**
+#### Configure environment
 ```bash
 cp .env.example .env
-# Edit .env to set the backend URL
+# Open .env and set your VITE_API_URL and VITE_GOOGLE_CLIENT_ID
 ```
 
-**3. Run locally:**
-```bash
-npm run dev
-```
+### 3. Development Workflows
+Use the provided `Makefile` for consistent commands:
 
-The dev server will start at `http://localhost:3000`.
-
-> Make sure the RiceSafe backend is running at the URL configured in `.env`.
+| Command | Action |
+|---------|--------|
+| `make dev` | Start local development server (Port 3000) |
+| `make test` | Run the full Vitest test suite once |
+| `make test-watch` | Run tests in watch mode |
+| `make build` | Generate production build |
+| `make preview` | Preview production build |
+| `make clean` | Remove `dist` and `node_modules` |
 
 ## Environment Variables
 
-| Variable      | Description                    | Example                      |
-|---------------|--------------------------------|------------------------------|
-| `VITE_API_URL`| Base URL of the backend API    | `http://localhost:8080/api`  |
+Create a `.env` file in the root directory:
 
-## Access Control
+| Variable | Required | Description |
+|----------|----------|-------------|
+| `VITE_API_URL` | Yes | Endpoint for the RiceSafe Backend |
+| `VITE_GOOGLE_CLIENT_ID` | Yes | Google OAuth Client ID for admin/expert login |
 
-This portal is for internal use only. Users must log in with an account that has the **ADMIN** or **EXPERT** role. Regular farmer accounts will be rejected at the login screen.
+## Role-based Access Control (RBAC)
 
-| Role     | Capabilities                                                           |
-|----------|------------------------------------------------------------------------|
-| `ADMIN`  | Full access: user management, community moderation, all outbreaks      |
-| `EXPERT` | Verify outbreaks, manage disease library, view reports                 |
+The portal enforces strict role checks. Only accounts with `ADMIN` or `EXPERT` roles can bypass the login screen.
+
+- **ADMIN:** Full system access—including User Management and Community Moderation.
+- **EXPERT:** Focused access—specializing in Outbreak Verification and Disease Library Updates.
+
+## Testing State
+
+- **API Logic:** Verified fetch wrappers and error handling.
+- **UI Components:** Tested modals, toasts, and dynamic button states.
+- **Page Modules:** Individual logic tests for Dashboard, Outbreaks, Users, and Verification flows.
+- **DOM Integration:** JSDOM-based verification of UI state transitions.
+
+Run `make test` to verify current health.
