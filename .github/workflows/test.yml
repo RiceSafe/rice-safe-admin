@@ -1,4 +1,4 @@
-name: Admin Unit & UI Tests
+name: CI
 
 on:
   push:
